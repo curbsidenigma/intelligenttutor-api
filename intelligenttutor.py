@@ -28,12 +28,38 @@ def positiveRad(angle):
 
 @app.route('/')
 def index():
-    response = dictionary()
-    response.add('name', 'intelligenttutor-api')
-    response.add('version', '3.0.2')
-    response.add('author', 'Gerardo Domínguez Ramírez')
-    response.add('date', '21/08/2022')
-    response.add('variables', 'r, theta, omega, alpha')
+    response = dict({
+        'name': 'intelligenttutor-api',
+        'version': '3.0.2',
+        'authors': [
+            {
+                'id': '1',
+                'name': 'Gerardo Dominguez Ramirez'
+            }
+        ],
+        'variables': [
+            {
+                'id': '1',
+                'name': 'position',
+                'symbol': 'r'
+            },
+            {
+                'id': '2',
+                'name': 'angular position',
+                'symbol': 'theta'
+            },
+            {
+                'id': '3',
+                'name': 'angular velocity',
+                'symbol': 'omega'
+            },
+            {
+                'id': '4',
+                'name': 'angular acceleration',
+                'symbol': 'alpha'
+            }
+        ]
+    })
     return jsonify(response)
 
 @app.route('/intelligenttutor/api', methods = ['POST'], endpoint = 'api')
