@@ -37,6 +37,8 @@ def index():
 def kinematic():
     r = []
     th = []
+    om = []
+    al = []
 
     req = request.get_json()
     res = dictionary()
@@ -63,6 +65,22 @@ def kinematic():
         th.append(positiveRad(sol[1][0]))
         th.append(positiveRad(sol[1][1]))
     res.add('theta', stringifyArray(th))
+
+    # Solve for angular velocity
+    f1 = -r[2]*sin(th[2])*x + r[3]*sin(th[3])*y - r[1]*om[1]*sin(th[1])
+    f2 = r[2]*cos(th[2])*x - r[3]*cos(th[3])*y + r[1]*om[1]*cos(th[1])
+    sol = solve([f1, f2], x, y)
+    om.append(sol[x].subs({x:1}).evalf(16))
+    om.append(sol[y].subs({x:1}).evalf(16))
+    res.add('omega', stringifyArray(om))
+
+    # Solve for angular acceleration
+    f1 = -r[2]*sin(th[2])*x + r[3]*sin(th[3])*y - r[1]*al[1]*sin(th[1]) - r[1]*(om[1]**2)*cos(th[1]) - r[2]*(om[2]**2)*cos(th[2]) + r[3]*(om[3]**2)*cos(th[3])
+    f2 = r[2]*cos(th[2])*x - r[3]*cos(th[3])*y + r[1]*al[1]*cos(th[1]) - r[1]*(om[1]**2)*sin(th[1]) - r[2]*(om[2]**2)*sin(th[2]) + r[3]*(om[3]**2)*sin(th[3])
+    sol = solve([f1, f2], x, y)
+    al.append(sol[x].subs({x:1}).evalf(16))
+    al.append(sol[y].subs({y:1}).evalf(16))
+    res.add('alpha', stringifyArray(al))
 
     return jsonify(res), 200
 
