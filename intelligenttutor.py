@@ -1,4 +1,3 @@
-from concurrent.futures import thread
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
@@ -97,6 +96,8 @@ def kinematic():
     res.add('theta', stringifyArray(th))
 
     # Solve for angular velocity
+    for data in req['omega']:
+        om.append(data['magnitude'])
     f1 = -r[2]*sin(th[2])*x + r[3]*sin(th[3])*y - r[1]*om[1]*sin(th[1])
     f2 = r[2]*cos(th[2])*x - r[3]*cos(th[3])*y + r[1]*om[1]*cos(th[1])
     sol = solve([f1, f2], x, y)
@@ -105,6 +106,8 @@ def kinematic():
     res.add('omega', stringifyArray(om))
 
     # Solve for angular acceleration
+    for data in req['alpha']:
+        al.append(data['magnitude'])
     f1 = -r[2]*sin(th[2])*x + r[3]*sin(th[3])*y - r[1]*al[1]*sin(th[1]) - r[1]*(om[1]**2)*cos(th[1]) - r[2]*(om[2]**2)*cos(th[2]) + r[3]*(om[3]**2)*cos(th[3])
     f2 = r[2]*cos(th[2])*x - r[3]*cos(th[3])*y + r[1]*al[1]*cos(th[1]) - r[1]*(om[1]**2)*sin(th[1]) - r[2]*(om[2]**2)*sin(th[2]) + r[3]*(om[3]**2)*sin(th[3])
     sol = solve([f1, f2], x, y)
